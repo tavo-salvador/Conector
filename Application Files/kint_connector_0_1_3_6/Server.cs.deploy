@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using API_Client;
+using API_Client.Models;
+
+namespace demo_sdk_hikvision
+{
+    public class Server
+    {
+        /*
+        public static void Ping_Server()
+        {
+            
+            Task.Run(async () =>
+            {                
+                if (!client.Authenticated)
+                    var token = await APIAuth(form.APIclient);
+
+            }).Wait();
+
+        }*/
+
+        public async Task<string> APIAuth(APIClient client)
+        {
+            try
+            {
+                var info_server = Consultas.Seleccionar_datatable("select * from server LIMIT 1;");
+
+                String ServerURL = row["ServerURL"].ToString();
+                String ServerIP = row["ServerIP"].ToString();
+                String ServerPort = row["ServerPort"].ToString();
+                String CustomerID = row["CustomerID"].ToString();
+                String UserName = row["UserName"].ToString();
+                String Password = MD5Crypto.Desencriptar(row["Password"].ToString());
+                String Sync = row["Sync"].ToString();
+
+                //APIClient client = new APIClient();
+                client.ApiURL = ServerURL ? "https://api.kis-ta.net";
+                client.APIPrexifRoute = "/api/public";
+                string token = string.Empty;
+
+                token = await client.BasicAuthenticateAsync(CustomerID, UserName, Password);
+                return token;
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
+        }
+    }
+}
